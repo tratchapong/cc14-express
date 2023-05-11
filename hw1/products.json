@@ -60,26 +60,6 @@
     }
   },
   {
-    "id": 12,
-    "title": "Refined Soft Sausages",
-    "price": 69,
-    "description": "The Apollotech B340 is an affordable wireless mouse with reliable connectivity, 12 months battery life and modern design",
-    "images": [
-      "https://picsum.photos/640/640?r=5902",
-      "https://picsum.photos/640/640?r=593",
-      "https://picsum.photos/640/640?r=6748"
-    ],
-    "creationAt": "2023-05-03T00:09:03.000Z",
-    "updatedAt": "2023-05-03T00:09:03.000Z",
-    "category": {
-      "id": 1,
-      "name": "Clothes",
-      "image": "https://picsum.photos/640/640?r=1983",
-      "creationAt": "2023-05-03T00:09:03.000Z",
-      "updatedAt": "2023-05-03T00:09:03.000Z"
-    }
-  },
-  {
     "id": 13,
     "title": "Handcrafted Plastic Computer",
     "price": 690,

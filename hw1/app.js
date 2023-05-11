@@ -7,6 +7,17 @@ const app = express()
 const getProducts = () => readFile("./products.json", "utf8").then(JSON.parse)
 const saveFile = (file, data) => writeFile(file, JSON.stringify(data, null, 2))
 
+const saveToDeleted = (del_item) => {
+    readFile("./deleted.json", "utf8")
+      .then(JSON.parse)
+      .then((all_del) => {
+        console.log('addDeleted :', del_item)
+        all_del.push(del_item);
+        return all_del;
+      })
+      .then((all_del) => saveFile("deleted.json", all_del));
+  };
+  
 app.get('/products', (req,res) => {
     const {_page = 1, _limit = 10} = req.query
     getProducts().then(all => {
@@ -25,7 +36,7 @@ app.delete('/product/:id', (req, res) => {
         if(del_idx === -1) 
             return {}
         let [del_item] = all.splice(del_idx, 1)
-        // saveToDeleted
+        saveToDeleted(del_item)
         return {all, del_item}
     }).then( ({all, del_item}) => {
         if(del_item)
