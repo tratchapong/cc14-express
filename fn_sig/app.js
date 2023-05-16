@@ -19,8 +19,8 @@ function use(...args) {
   
 }
 use()
-use(1)
-use(1,2)
+use((req, res) => {console.log('first')})
+use('/test',(req, res) => {console.log('first')})
 use(1,2,3)
 use(1,2,3,4)
 

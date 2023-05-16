@@ -1,19 +1,27 @@
+require('dotenv').config()
 const express = require('express')
-const productRoute = require('./routes/producRoute')
+const mysql = require('mysql2/promise')
+const productsRoute = require('./routes/productsRoute')
+const categoryRoute = require('./routes/categoryRoute')
 
 const app = express()
 
 app.use(express.json())
 
+app.use(['/products', '/product'], productsRoute)
+app.use('/category', categoryRoute)
 
-app.use('/product', productRoute)
 
-app.use( (req,res,next)=> {
-  res.status(404).json({msg: 'No Service'})
+// not found
+app.use((req, res) => {
+    res.status(404).json({msg: 'path not found'})
 })
 
-app.use( (err, req, res, next) => {
-  res.status(500).json({msg: err.message})
+// error 
+app.use((err, req, res, next)=> {
+    res.status(500).json({error : err.message})
 })
 
-app.listen(8000, ()=> console.log('Server on 8000..'))
+
+let port = process.env.PORT || 8000
+app.listen(port, ()=> console.log('Server on port', port))

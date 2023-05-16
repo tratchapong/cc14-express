@@ -3,12 +3,14 @@ const mysql = require('mysql2/promise')
 
 const app = express()
 
-const dbInfo = {
-  host: 'localhost',
-  user: 'root',
-  password: 'Codecamp2021',
-  database: 'cc13_shop'
-}
+// const dbInfo = {
+//   host: 'localhost',
+//   user: 'root',
+//   password: 'Codecamp2021',
+//   database: 'cc13_shop'
+// }
+
+const dbInfo = 'mysql://root:Codecamp2021@localhost'
 
 const pool = mysql.createPool(dbInfo)
 

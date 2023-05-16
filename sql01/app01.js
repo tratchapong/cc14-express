@@ -1,41 +1,69 @@
-const express = require('express')
-const mysql = require('mysql2')
-const mysqlPM = require('mysql2/promise')
+require('dotenv').config()
+const mysql = require('mysql2/promise')
 
-const app = express()
+// const dbInfo = {
+//     host: process.env.DB_HOST,
+//     user: process.env.DB_USER,
+//     password: process.env.DB_PASSWORD,
+//     database: process.env.DB_NAME
+// }
 
-const dbInfo = {
-  host: 'localhost',
-  user: 'root',
-  password: 'Codecamp2021',
-  database: 'cc13_shop'
-}
+// const dbInfo = {
+//     host: 'localhost',
+//     user: 'root',
+//     password: 'Codecamp2021',
+//     database: 'cc14_shop'
+// }
+
+// mysql://root:password@localhost:port/dbName
+
+// const dbInfo = 'mysql://root:Codecamp2021@localhost:3306/cc14_shop'
+
+const dbInfo = process.env.DB_CONNECT
+
+// mysql.createConnection(dbInfo)
+// .then( db => db.query('select * from products'))
+// .then(result => console.log(result[0]))
 
 const conn = mysql.createConnection(dbInfo)
-// mysql.createConnection(dbInfo)
-// .then(db => db.query('Select * from products'))
-// .then(([rows, field]) => {
-//   console.log(rows)
-//   console.log(field)
+
+// conn.then( db => 
+//     db.query('Select * from products').then( result => console.log(result[0]))
+// )
+
+// conn.then( db => 
+//     db.query('Select * from products').then( ([rows, fields]) => console.log(rows))
+// )
+
+// conn.then( db => 
+//     db.query('Select * from products').then( ([rows]) => console.log(rows))
+// )
+
+
+conn.then( db => 
+    db.query('Select * from products').then( ([rows]) => {
+        // console.log(rows)
+        console.log(rows[2].price)
+    })
+)
+
+// Lab
+// console.log แสดง product พร้อม category_name
+
+// let sql = 'Select p.name, p.price, c.name As c_name from products p join categories c on p.category_id = c.id'
+
+// conn.then(db=> {
+//     db.query(sql).then( ([rows]) => {
+//         console.log(rows)
+//     })
 // })
 
+// console.log แสดงมูลค่ารวมของ products ทั้งหมด
 
+let sql = 'Select sum(quantity * price) As totalPrice from products'
 
-let sql = `select p.name AS p_name, p.price AS p_price, c.name AS c_name
-from products p 
-join category c on p.cat_id = c.id`
-
-let sql2 = ``
-// conn
-// .then(db => db.query(sql))
-// .then(([rows, field]) => {
-//   console.log(rows)
-//   // console.log(field)
-// }).then()
-
-
-conn.query(sql, (err, results, fields) => {
-  console.log(results)
+conn.then(db=> {
+    db.query(sql).then( ([rows]) => {
+        console.log(rows)
+    })
 })
-
-conn.end()
