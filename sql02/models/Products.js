@@ -18,3 +18,20 @@ exports.create = (product) => {
     return pool.query(sql, [name, price, quantity, category_id])
     .then(([rs]) => rs)
 }
+
+exports.delete = (id) => {
+    let sql = 'DELETE FROM products WHERE id = ?'
+    return pool.query(sql, [id]).then(([rs]) => rs)
+}
+
+exports.update = (id, body) => {
+    const {name, price, quantity, category_id} = body
+    let sql = 'UPDATE products SET name=?, price=?, quantity=?, category_id=? WHERE id=?'
+    return pool.query(sql,[name, price, quantity, category_id, id]).then( ([rs]) => rs)
+}
+
+exports.findByName = (name) => {
+    console.log(name)
+    let sql = 'SELECT * FROM products WHERE name LIKE ?'
+    return pool.query(sql, [`%${name}%`]).then(([rs])=> rs)
+}
