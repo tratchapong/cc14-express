@@ -1,32 +1,40 @@
 require('dotenv').config()
+const fs = require('fs')
 const {readFile, writeFile} = require('fs/promises')
+const path = require('path')
 const express = require('express')
 const app = express()
 
-// const getProducts = () => readFile("./products.json", "utf8").then(data => JSON.parse(data))
-const getProducts = () => readFile("./products.json", "utf8").then(JSON.parse)
+const productsFile = path.resolve('products.json')
+const deletedFile = path.resolve('deleted.json')
+
+const getProducts = () => readFile(productsFile, "utf8").then(JSON.parse)
+const getDeleted = () => readFile(deletedFile, "utf8").then(JSON.parse)
 const saveFile = (file, data) => writeFile(file, JSON.stringify(data, null, 2))
 
+if(!fs.existsSync(deletedFile))
+    saveFile(deletedFile, [])
+
 const saveToDeleted = (del_item) => {
-    readFile("./deleted.json", "utf8")
-      .then(JSON.parse)
-      .then((all_del) => {
+    return getDeleted().then((all_del) => {
         console.log('addDeleted :', del_item)
         all_del.push(del_item);
-        return all_del;
-      })
-      .then((all_del) => saveFile("deleted.json", all_del));
-  };
+        return saveFile(deletedFile, all_del);
+  });
+}
   
 app.get('/products', (req,res) => {
-    const {_page = 1, _limit = 10} = req.query
+    const {_page = 1, _limit = 10,_start = 0, _end = 999999} = req.query  
     getProducts().then(all => {
+        let productsFilter = (_start!=0 && _end!=999999) 
+            ? all.filter(el => el.price >= +_start && el.price <= +_end)
+            : all
         let start = (_page-1) * _limit
         let end = start + +_limit 
-        let scope_items = all.slice(start, end)
-        console.log(scope_items)
-        return scope_items
-    }).then( output => res.json(output))
+        let scope_items = productsFilter.slice(start, end)
+        console.log(productsFilter.length)
+        res.json(scope_items)
+    })
 })
 
 app.delete('/product/:id', (req, res) => {
@@ -37,12 +45,18 @@ app.delete('/product/:id', (req, res) => {
             return {}
         let [del_item] = all.splice(del_idx, 1)
         saveToDeleted(del_item)
-        return {all, del_item}
-    }).then( ({all, del_item}) => {
-        if(del_item)
-            saveFile('./products.json', all)
-        return { msg: `${del_item?.id || 'nothing'} have deleted `}
-    }).then( msg => res.status(200).json(msg))
+        saveFile('./products.json', all)
+        res.json( { msg: `${del_item?.id || 'nothing'} have deleted `})
+    })
+})
+
+app.get('/products-price', (req, res) => {
+    const {_start = 0, _end = 999999} =req.query
+    getProducts().then(all => {
+        let output = all.filter(el => el.price >= +_start && el.price <= +_end)
+        console.log(output)
+        res.json(output)
+    })
 })
 
 app.use((req, res)=> {
